@@ -77,6 +77,17 @@ public class CalculatorTest {
         assertEquals(-130524, result.intValueExact());
     }
     
+    @Test
+    public void testLongerExpression3() throws ParseException {
+        
+        final String expression = "2147483577 + 2147483634 + 2147483645 + 2147483566 * 2147483644 * -2147483645";
+        
+        BigInteger result = Calculator.calculate(expression);
+        
+        assertEquals(new BigInteger("-9903519903842987811138436224"), result);
+        
+    }
+    
     @Test(expected = ParseException.class)
     public void testMalformedExpression() throws ParseException {
         

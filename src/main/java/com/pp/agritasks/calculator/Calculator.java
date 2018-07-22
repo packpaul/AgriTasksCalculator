@@ -7,6 +7,8 @@ import java.math.BigInteger;
 import java.text.ParseException;
 import java.util.StringTokenizer;
 
+import com.pp.agritasks.calculator.utils.BigIntegerAccumulator;
+
 /**
  * Calculator class that evaluates results for passed in expressions.
  * Expressions are to contain only <b>+</b> and <b>*</b> operations. 
@@ -21,8 +23,8 @@ public class Calculator {
     private State state = State.WAITING_NUMBER;
     private int tokenCount = 0;
     
-    private long s = 0;
-    private long m = 0;
+    private BigIntegerAccumulator s = new BigIntegerAccumulator();
+    private BigIntegerAccumulator m = new BigIntegerAccumulator();
     
     public static BigInteger calculate(String expression) throws ParseException {
         return new Calculator().evaluate(expression).buildResult();
@@ -72,9 +74,9 @@ public class Calculator {
     }
     
     private void processAddition() {
-        if (m != 0) {
-            s += m;
-            m = 0;
+        if (! m.isZero()) {
+            s.add(m);
+            m.resetToZero();
         }
         
         state = State.WAITING_NUMBER;
@@ -85,10 +87,10 @@ public class Calculator {
     }
 
     private void processNumber(int number) {
-        if (m != 0) {
-            m *= number;
+        if (m.isZero()) {
+            m.add(number);
         } else {
-            m = number;
+            m.multiply(number);
         }
         
         state = State.WAITING_OPERATION;
@@ -102,7 +104,7 @@ public class Calculator {
         
         processAddition();
         
-        return BigInteger.valueOf(s);
+        return s.getValue();
     }
     
     private enum State { WAITING_NUMBER, WAITING_OPERATION };
